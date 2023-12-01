@@ -30,8 +30,8 @@ while (<>) {
     my @matcheslast = $line_reversed =~ /(?:eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)|\d/ig;
     $last_digit = $matcheslast[0];
 
-    $first_digit = defined $first_digit ? $word_to_digit{$first_digit} // $first_digit : undef;
-    $last_digit  = defined $last_digit ? $word_to_digit{reverse $last_digit} // $last_digit : undef;
+    $first_digit = $word_to_digit{$first_digit} // $first_digit;
+    $last_digit  = $word_to_digit{reverse $last_digit} // $last_digit;
 
     $sum2 += $first_digit * 10 + $last_digit;
 }
