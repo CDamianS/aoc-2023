@@ -30,10 +30,12 @@ while (<>) {
     chomp;
     my @matches = $_ =~ /(?:one|two|three|four|five|six|seven|eight|nine)|\d/ig;
     my $first_digit = $matches[0];
-    my $last_digit = $matches[-1];
+    my $line_reversed = reverse $_;
+    my @matcheslast = $line_reversed =~ /(?:eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)|\d/ig;
+    my $last_digit = $matcheslast[0];
 
     $first_digit = defined $first_digit ? $word_to_digit{$first_digit} // $first_digit : undef;
-    $last_digit  = defined $last_digit ? $word_to_digit{$last_digit} // $last_digit : undef;
+    $last_digit  = defined $last_digit ? $word_to_digit{reverse $last_digit} // $last_digit : undef;
 
     if (defined $first_digit && defined $last_digit) {
         $sum += $first_digit * 10 + $last_digit;
