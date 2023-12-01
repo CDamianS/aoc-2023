@@ -4,15 +4,7 @@ use strict;
 use warnings;
 
 my $sum = 0;
-
-# while (<>) {
-#     chomp;
-#     my ($first_digit) = $_ =~ /(\d)/;
-#     my ($last_digit)  = $_ =~ /(\d)\D*$/;
-#     $sum += $first_digit * 10 + $last_digit;
-# }
-
-# print "Part one: " . $sum . "\n";
+my $sum2 = 0;
 
 my %word_to_digit = (
     'one'   => 1,
@@ -28,18 +20,20 @@ my %word_to_digit = (
 
 while (<>) {
     chomp;
+    my ($first_digit) = $_ =~ /(\d)/;
+    my ($last_digit)  = $_ =~ /(\d)\D*$/;
+    $sum += $first_digit * 10 + $last_digit;
+
     my @matches = $_ =~ /(?:one|two|three|four|five|six|seven|eight|nine)|\d/ig;
-    my $first_digit = $matches[0];
+    $first_digit = $matches[0];
     my $line_reversed = reverse $_;
     my @matcheslast = $line_reversed =~ /(?:eno|owt|eerht|ruof|evif|xis|neves|thgie|enin)|\d/ig;
-    my $last_digit = $matcheslast[0];
+    $last_digit = $matcheslast[0];
 
     $first_digit = defined $first_digit ? $word_to_digit{$first_digit} // $first_digit : undef;
     $last_digit  = defined $last_digit ? $word_to_digit{reverse $last_digit} // $last_digit : undef;
 
-    if (defined $first_digit && defined $last_digit) {
-        $sum += $first_digit * 10 + $last_digit;
-    }
+    $sum2 += $first_digit * 10 + $last_digit;
 }
 
-print "Part two: $sum\n";
+print "Part one: $sum\nPart two: $sum2\n";
