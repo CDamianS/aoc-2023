@@ -1,0 +1,43 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '("cl-ppcre") :silent t))
+
+(defpackage :ros.script.day1.3910522001 (:use :cl))
+(in-package :ros.script.day1.3910522001)
+(defvar *input* (uiop:read-file-lines "input.txt"))
+
+(defun line-parser-part-one (line)
+  (let ((first (* 10 (parse-integer (car (cl-ppcre:all-matches-as-strings "([1-9])" line)))))
+        (last (parse-integer (car (cl-ppcre:all-matches-as-strings "([1-9])" (reverse line))))))
+    (+ first last)))
+
+(defun part-one (input)
+  (apply '+ (mapcar #'line-parser-part-one input)))
+
+(defvar *values-part-one* (pairlis '("one" "two" "three" "four" "five" "six" "seven" "eight" "nine")
+                                   '(1 2 3 4 5 6 7 8 9)))
+(defun custom-parser (input-string)
+  (let ((parsed-int (parse-integer input-string :junk-allowed t)))
+    (if parsed-int
+        parsed-int
+        (cdr (assoc input-string *values-part-one* :test #'string=)))))
+
+(defun line-parser-part-two (line)
+  (let ((first (custom-parser (car (cl-ppcre:all-matches-as-strings "(?:one|two|three|four|five|six|seven|eight|nine|[1-9])" line))))
+        (last (custom-parser (reverse (car (cl-ppcre:all-matches-as-strings "(?:eno|owt|eerht|ruof|evif|xis|neves|thgie|enin|[1-9])" (reverse line)))))))
+    (+ (* 10 first) last)))
+
+(defun part-two (input)
+  (apply '+ (mapcar #'line-parser-part-two input)))
+
+(defun main ()
+  (format t "Part one: ~A~cPart two: ~A"
+          (part-one *input*)
+          #\Newline
+          (part-two *input*)))
+;;; vim: set ft=lisp lisp:
