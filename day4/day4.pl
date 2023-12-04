@@ -4,30 +4,20 @@ use strict;
 use warnings;
 use List::Util qw(min);
 
-open my $file, '<', 'input.txt' or die $!;
-my @ll = map { chomp; $_ } <$file>;
-close $file;
-
+my @lines;
 my $p1 = 0;
-my @multiplier = (1) x @ll;
 my $p2 = 0;
+while (<>) {chomp; push @lines, $_;}
+my @multiplier = (1) x @lines;
 
-for my $i (0 .. $#ll) {
-    my ($winning, $have) = (split /:/, $ll[$i])[1] =~ /^([^\|]+)\|(.+)$/;
-
+for my $i (0 .. $#lines) {
+    my ($winning, $have) = (split /:/, $lines[$i])[1] =~ /^([^\|]+)\|(.+)$/;
     my %winning_set = map { $_ => 1 } split ' ', $winning;
     my @have = grep { exists $winning_set{$_} } split ' ', $have;
-
-    if (@have) {
-        $p1 += 2 ** (@have - 1);
-    }
+    $p1 += 2 ** (@have - 1) if @have;
 
     my $mymult = $multiplier[$i];
-
-    for my $j ($i + 1 .. min($i + @have, $#ll)) {
-        $multiplier[$j] += $mymult;
-    }
-
+    for my $j ($i + 1 .. min($i + @have, $#lines)) {$multiplier[$j] += $mymult;}
     $p2 += $mymult;
 }
 
