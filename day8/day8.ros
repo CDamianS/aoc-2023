@@ -18,20 +18,26 @@ exec ros -Q -- $0 "$@"
   (let ((label (subseq line 0 3))
         (left (subseq line 7 10))
         (right (subseq line 12 15)))
-    (cons (cons label (list :L left :R right)) *graph*)))
+    (cons label (list :L left :R right))))
 
 (defvar *graph* (mapcar #'line-parser *section*))
 
-(defun find-destination (start-loc graph dir)
-  (let* ((loc start-loc)
-         (steps 0)
-         (dir-length (length dir)))
+(defun get-elements (label graph)
+  (cdr (assoc label graph :test #'string=)))
 
-    (loop while (not (string= loc "ZZZ")) do
-      (setq loc (cdr (assoc loc graph)))
-      (setq loc (cdr (assoc (char (aref dir (mod steps dir-length))) loc)))
-      (1+ steps))))
+(defun find-loc (loc dir)
+  (let ((element (get-elements loc *graph*)))
+    (if (char= dir #\L)
+        (cadr element)
+        (elt element 3))))
 
-(defun main (&rest argv)
-  (declare (ignorable argv)))
-;;; vim: set ft=lisp lisp:
+(defun find-dest (loc graph dirs steps)
+  (let* ((dir (if (zerop (length dirs))
+                  (char *dirs* 0)
+                  (char dirs 0)))
+         (next-dirs (if (zerop (length dirs))
+                        *dirs*
+                        (subseq dirs 1))))
+    (if (string= loc "ZZZ")
+        (format t "steps: ~A" steps)
+        (find-dest (find-loc loc dir) graph next-dirs (1+ steps)))))
