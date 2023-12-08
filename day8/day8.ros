@@ -1,0 +1,37 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp(ql:quickload '() :silent t))
+
+(defpackage :ros.script.day8.3911005871 (:use :cl))
+(in-package :ros.script.day8.3911005871)
+
+(defvar *input* (uiop:read-file-lines "input.txt"))
+(defvar *dirs* (car *input*))
+(defvar *section* (cddr *input*))
+
+(defun line-parser (line)
+  (let ((label (subseq line 0 3))
+        (left (subseq line 7 10))
+        (right (subseq line 12 15)))
+    (cons (cons label (list :L left :R right)) *graph*)))
+
+(defvar *graph* (mapcar #'line-parser *section*))
+
+(defun find-destination (start-loc graph dir)
+  (let* ((loc start-loc)
+         (steps 0)
+         (dir-length (length dir)))
+
+    (loop while (not (string= loc "ZZZ")) do
+      (setq loc (cdr (assoc loc graph)))
+      (setq loc (cdr (assoc (char (aref dir (mod steps dir-length))) loc)))
+      (1+ steps))))
+
+(defun main (&rest argv)
+  (declare (ignorable argv)))
+;;; vim: set ft=lisp lisp:
