@@ -16,13 +16,15 @@ exec ros -Q -- $0 "$@"
 (defun part-one (lst)
   "Recursively finds next"
   (if lst
-      (let ((diffs (mapcar #'- (rest lst) lst)))
-        (+ (car (last lst)) (calculate-diffs diffs))) 0))
+      (let ((diffs (mapcar #'- (cdr lst) lst)))
+        (+ (car (last lst)) (part-one diffs)))
+      0))
 
 (defun part-two (lst)
   (if lst
-      (let ((diffs (mapcar #'- (rest lst) lst)))
-        (+ (car lst) (calculate-diffs diffs))) 0))
+      (let ((diffs (mapcar #'- (cdr lst) lst)))
+        (- (car lst) (part-two diffs)))
+      0))
 
 (defun main ()
   (format t "Part 1: ~A~%Part 2: ~A"
